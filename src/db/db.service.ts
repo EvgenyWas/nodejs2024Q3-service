@@ -66,7 +66,7 @@ export class DbService {
   get favoriteArtist() {
     return {
       findMany: this.findFavoriteArtists,
-      create: this.saveFavoriteArtist,
+      create: this.addFavoriteArtist,
       delete: this.deleteFavoriteArtist,
     };
   }
@@ -74,7 +74,7 @@ export class DbService {
   get favoriteAlbum() {
     return {
       findMany: this.findFavoriteAlbums,
-      create: this.saveFavoriteAlbum,
+      create: this.addFavoriteAlbum,
       delete: this.deleteFavoriteAlbum,
     };
   }
@@ -82,7 +82,7 @@ export class DbService {
   get favoriteTrack() {
     return {
       findMany: this.findFavoriteTracks,
-      create: this.saveFavoriteTrack,
+      create: this.addFavoriteTrack,
       delete: this.deleteFavoriteTrack,
     };
   }
@@ -300,10 +300,15 @@ export class DbService {
   private findFavoriteArtists = async (): Promise<Array<Artist>> =>
     this.favs.artists.map(this.getArtist);
 
-  private saveFavoriteArtist = async (id: string): Promise<Artist> => {
+  private addFavoriteArtist = async (id: string): Promise<Artist> => {
+    const artist = this.getArtist(id);
+    if (!artist) {
+      return;
+    }
+
     this.favs.artists.push(id);
 
-    return this.getArtist(id);
+    return artist;
   };
 
   private deleteFavoriteArtist = async (
@@ -324,10 +329,15 @@ export class DbService {
   private findFavoriteAlbums = async (): Promise<Array<Album>> =>
     this.favs.albums.map(this.getAlbum);
 
-  private saveFavoriteAlbum = async (id: string): Promise<Album> => {
+  private addFavoriteAlbum = async (id: string): Promise<Album | undefined> => {
+    const album = this.getAlbum(id);
+    if (!album) {
+      return;
+    }
+
     this.favs.albums.push(id);
 
-    return this.getAlbum(id);
+    return album;
   };
 
   private deleteFavoriteAlbum = async (
@@ -348,10 +358,15 @@ export class DbService {
   private findFavoriteTracks = async (): Promise<Array<Track>> =>
     this.favs.tracks.map(this.getTrack);
 
-  private saveFavoriteTrack = async (id: string): Promise<Track> => {
+  private addFavoriteTrack = async (id: string): Promise<Track | undefined> => {
+    const track = this.getTrack(id);
+    if (!track) {
+      return;
+    }
+
     this.favs.tracks.push(id);
 
-    return this.getTrack(id);
+    return track;
   };
 
   private deleteFavoriteTrack = async (
