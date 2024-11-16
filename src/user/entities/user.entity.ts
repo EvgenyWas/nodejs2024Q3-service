@@ -1,8 +1,8 @@
 import { Exclude } from 'class-transformer';
 
-import { User } from 'src/shared/interfaces/user.interface';
+import { EntityUser, User } from 'src/shared/interfaces/user.interface';
 
-export class UserEntity implements User {
+export class UserEntity implements EntityUser {
   id: string;
   login: string;
   version: number;
@@ -12,7 +12,11 @@ export class UserEntity implements User {
   @Exclude()
   password: string;
 
-  constructor(partial: Partial<UserEntity>) {
-    Object.assign(this, partial);
+  constructor(partial: Partial<User>) {
+    Object.assign(this, {
+      ...partial,
+      createdAt: partial.createdAt?.getTime() || partial.createdAt,
+      updatedAt: partial.updatedAt?.getTime() || partial.updatedAt,
+    });
   }
 }

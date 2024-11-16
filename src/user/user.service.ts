@@ -2,22 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { DbService } from 'src/db/db.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(private db: DbService) {}
 
-  async create(dto: CreateUserDto) {
-    const timestamp = Date.now();
-    const user = await this.db.user.create({
-      ...dto,
-      version: 1,
-      createdAt: timestamp,
-      updatedAt: timestamp,
-    });
-
-    return user;
+  create(data: CreateUserDto) {
+    return this.db.user.create({ data });
   }
 
   findAll() {
@@ -25,18 +16,29 @@ export class UserService {
   }
 
   findOne(id: string) {
-    return this.db.user.findUnique(id);
+    return this.db.user.findUnique({ where: { id } });
   }
 
-  update(dto: UserEntity) {
-    return this.db.user.update({
-      ...dto,
-      version: dto.version + 1,
-      updatedAt: Date.now(),
-    });
+  async updatePassword(id: string, password: string) {
+    try {
+      const user = await this.db.user.update({
+        where: { id },
+        data: { password, version: { increment: 1 } },
+      });
+
+      return user;
+    } catch (error) {
+      return null;
+    }
   }
 
-  delete(id: string) {
-    return this.db.user.delete(id);
+  async delete(id: string) {
+    try {
+      await this.db.user.delete({ where: { id } });
+
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }

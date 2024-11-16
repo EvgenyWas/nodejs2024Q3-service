@@ -52,21 +52,21 @@ export class UserController {
   @Put(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: UpdateUserDto,
+    @Body() { oldPassword, newPassword }: UpdateUserDto,
   ) {
     const user = await this.userService.findOne(id);
     if (!user) {
       throw new NotFoundException();
     }
 
-    if (user.password !== dto.oldPassword) {
+    if (user.password !== oldPassword) {
       throw new ForbiddenException();
     }
 
-    const updatedUser = await this.userService.update({
-      ...user,
-      password: dto.newPassword,
-    });
+    const updatedUser = await this.userService.updatePassword(id, newPassword);
+    if (!updatedUser) {
+      throw new NotFoundException();
+    }
 
     return new UserEntity(updatedUser);
   }
