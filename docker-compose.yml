@@ -19,6 +19,8 @@ services:
     image: yauhenivas/home-library-service
     build: .
     restart: always
+    environment:
+      - PORT=${PORT}
     volumes:
       - ./src:/app/src
     env_file:
