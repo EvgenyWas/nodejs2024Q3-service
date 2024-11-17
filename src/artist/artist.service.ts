@@ -8,8 +8,8 @@ import { DbService } from 'src/db/db.service';
 export class ArtistService {
   constructor(private db: DbService) {}
 
-  create(dto: CreateArtistDto) {
-    return this.db.artist.create(dto);
+  create(data: CreateArtistDto) {
+    return this.db.artist.create({ data });
   }
 
   findAll() {
@@ -17,14 +17,26 @@ export class ArtistService {
   }
 
   findOne(id: string) {
-    return this.db.artist.findUnique(id);
+    return this.db.artist.findUnique({ where: { id } });
   }
 
-  update(id: string, dto: UpdateArtistDto) {
-    return this.db.artist.update({ ...dto, id });
+  async update(id: string, data: UpdateArtistDto) {
+    try {
+      const artist = await this.db.artist.update({ where: { id }, data });
+
+      return artist;
+    } catch (error) {
+      return null;
+    }
   }
 
-  delete(id: string) {
-    return this.db.artist.delete(id);
+  async delete(id: string) {
+    try {
+      await this.db.artist.delete({ where: { id } });
+
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }

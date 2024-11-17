@@ -6,11 +6,26 @@ import { DbService } from 'src/db/db.service';
 export class FavsAlbumService {
   constructor(private db: DbService) {}
 
-  create(id: string) {
-    return this.db.favoriteAlbum.create(id);
+  async create(albumId: string) {
+    try {
+      const favoriteAlbum = await this.db.favoriteAlbum.create({
+        data: { albumId },
+        select: { album: true },
+      });
+
+      return favoriteAlbum;
+    } catch (error) {
+      return null;
+    }
   }
 
-  delete(id: string) {
-    return this.db.favoriteAlbum.delete(id);
+  async delete(albumId: string) {
+    try {
+      await this.db.favoriteAlbum.delete({ where: { albumId } });
+
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }

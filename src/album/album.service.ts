@@ -8,8 +8,8 @@ import { DbService } from 'src/db/db.service';
 export class AlbumService {
   constructor(private db: DbService) {}
 
-  create(dto: CreateAlbumDto) {
-    return this.db.album.create(dto);
+  create(data: CreateAlbumDto) {
+    return this.db.album.create({ data });
   }
 
   findAll() {
@@ -17,14 +17,26 @@ export class AlbumService {
   }
 
   findOne(id: string) {
-    return this.db.album.findUnique(id);
+    return this.db.album.findUnique({ where: { id } });
   }
 
-  update(id: string, dto: UpdateAlbumDto) {
-    return this.db.album.update({ ...dto, id });
+  async update(id: string, data: UpdateAlbumDto) {
+    try {
+      const artist = await this.db.album.update({ where: { id }, data });
+
+      return artist;
+    } catch (error) {
+      return null;
+    }
   }
 
-  delete(id: string) {
-    return this.db.album.delete(id);
+  async delete(id: string) {
+    try {
+      await this.db.album.delete({ where: { id } });
+
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }

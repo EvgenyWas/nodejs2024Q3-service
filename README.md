@@ -15,6 +15,13 @@ To clone the repository:
 git clone https://github.com/EvgenyWas/nodejs2024Q3-service.git
 ```
 
+## Configuration
+
+The server listens on port 4000 by default. You have to specify environmental variables in `.env` fille according to `.env.example`.
+
+After starting the application, view the OpenAPI documentation by opening [http://localhost:4000/doc/](http://localhost:4000/doc/) in your browser.
+For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
 ## Installing NPM modules
 
 Navigate to the project directory and install dependencies:
@@ -37,12 +44,13 @@ Or to start the service in dev mode with watching source files changes:
 npm run start:dev
 ```
 
-### Configuration
+## Running the Application in Docker
 
-The server listens on port 4000 by default. You can set a different port in the `.env` file using the `PORT` variable.
+Start the service in Docker container using:
 
-After starting the application, view the OpenAPI documentation by opening [http://localhost:4000/doc/](http://localhost:4000/doc/) in your browser.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+```
+docker compose up -d
+```
 
 ## API Endpoints
 
@@ -139,6 +147,14 @@ npm run lint
 
 ```
 npm run format
+```
+
+### Audit vulnerabilities
+
+Check package dependencies for security vulnerabilities. More information [here](https://docs.npmjs.com/auditing-package-dependencies-for-security-vulnerabilities)
+
+```
+npm run audit
 ```
 
 ## Debugging

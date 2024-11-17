@@ -8,8 +8,8 @@ import { DbService } from 'src/db/db.service';
 export class TrackService {
   constructor(private db: DbService) {}
 
-  create(dto: CreateTrackDto) {
-    return this.db.track.create(dto);
+  create(data: CreateTrackDto) {
+    return this.db.track.create({ data });
   }
 
   findAll() {
@@ -17,14 +17,26 @@ export class TrackService {
   }
 
   findOne(id: string) {
-    return this.db.track.findUnique(id);
+    return this.db.track.findUnique({ where: { id } });
   }
 
-  update(id: string, dto: UpdateTrackDto) {
-    return this.db.track.update({ ...dto, id });
+  async update(id: string, data: UpdateTrackDto) {
+    try {
+      const track = await this.db.track.update({ where: { id }, data });
+
+      return track;
+    } catch (error) {
+      return null;
+    }
   }
 
-  delete(id: string) {
-    return this.db.track.delete(id);
+  async delete(id: string) {
+    try {
+      await this.db.track.delete({ where: { id } });
+
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }
