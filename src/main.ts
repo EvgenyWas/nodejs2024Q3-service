@@ -1,15 +1,23 @@
 import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import 'dotenv/config';
 
 import { AppModule } from './app.module';
+import { AuthGuard } from './auth/auth.guard';
 
 const PORT = process.env.PORT || 4000;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+  const jwtService = app.get(JwtService);
+  const reflector = app.get(Reflector);
+
   app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalGuards(new AuthGuard(jwtService, configService, reflector));
 
   // Setup swagger
   const config = new DocumentBuilder()
