@@ -7,6 +7,7 @@ import 'dotenv/config';
 
 import { AppModule } from './app.module';
 import { AuthGuard } from './auth/auth.guard';
+import { AppLogger } from './logger/logger.service';
 
 const PORT = process.env.PORT || 4000;
 
@@ -15,9 +16,17 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const jwtService = app.get(JwtService);
   const reflector = app.get(Reflector);
+  const logger = app.get(AppLogger);
+
+  logger.setLogLevels(
+    configService.get(`logger.levels.${configService.get('LOG_LEVEL', 2)}`, [
+      'log',
+    ]),
+  );
 
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalGuards(new AuthGuard(jwtService, configService, reflector));
+  app.useLogger(logger);
 
   // Setup swagger
   const config = new DocumentBuilder()

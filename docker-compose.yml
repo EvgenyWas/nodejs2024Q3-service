@@ -16,7 +16,7 @@ services:
       - hls-network
 
   app:
-    image: yauhenivas/home-library-service
+    image: yauhenivas/home-library-service:part3
     build: .
     restart: always
     environment:

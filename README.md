@@ -44,6 +44,13 @@ Or to start the service in dev mode with watching source files changes:
 npm run start:dev
 ```
 
+If you want to run only the app locally, you have to run database in a Docker container.
+Change env var DB_HOST to localhost and run the database service:
+
+```
+docker compose up -d database
+```
+
 ## Running the Application in Docker
 
 Start the service in Docker container using:
@@ -139,6 +146,18 @@ To run only specific test suite with authorization
 npm run test:auth -- <path to suite>
 ```
 
+To run all test for refresh mechanism of authorization
+
+```
+npm run test:refresh
+```
+
+If test suites with authorization fail after a few runs, reset DB with the following script:
+
+```
+npx prisma migrate rest
+```
+
 ### Auto-fix and format
 
 ```
@@ -162,3 +181,10 @@ npm run audit
 To debug the application in VSCode, press <kbd>F5</kbd>.
 
 For more information, visit: [VSCode Debugging](https://code.visualstudio.com/docs/editor/debugging).
+
+- Log levels available:
+  - 0 - error and below
+  - 1 - warn and below
+  - 2 - log and below (**default**)
+  - 3 - debug and below
+  - 4 - verbose
