@@ -1,10 +1,11 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, UseFilters } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { SignupDto } from './dto/signup.dto';
 import { Public } from 'src/shared/decorators/auth/public';
+import { AuthRefreshExceptionFilter } from 'src/shared/filters/AuthRefreshException.filter';
 
 @Controller('auth')
 export class AuthController {
@@ -26,6 +27,7 @@ export class AuthController {
 
   @Public()
   @Post('refresh')
+  @UseFilters(AuthRefreshExceptionFilter)
   @HttpCode(200)
   refresh(@Body() dto: RefreshDto) {
     return this.authService.refresh(dto);

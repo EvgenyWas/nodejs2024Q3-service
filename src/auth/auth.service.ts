@@ -47,11 +47,16 @@ export class AuthService {
 
   async refresh(dto: RefreshDto) {
     try {
-      const payload = await this.jwtService.verifyAsync(dto.refreshToken, {
-        secret: this.configService.get('JWT_SECRET_REFRESH_KEY'),
+      const { login, userId } = await this.jwtService.verifyAsync(
+        dto.refreshToken,
+        {
+          secret: this.configService.get('JWT_SECRET_REFRESH_KEY'),
+        },
+      );
+      const [accessToken, refreshToken] = await this.grantTokensPair({
+        login,
+        id: userId,
       });
-
-      const [accessToken, refreshToken] = await this.grantTokensPair(payload);
 
       return { accessToken, refreshToken };
     } catch (error) {
@@ -59,8 +64,8 @@ export class AuthService {
     }
   }
 
-  private grantTokensPair({ login, id }: UserEntity) {
-    const payload = { username: login, sub: id };
+  private grantTokensPair({ login, id }: Pick<UserEntity, 'login' | 'id'>) {
+    const payload = { login, userId: id };
 
     return Promise.all([
       this.jwtService.signAsync(payload),
